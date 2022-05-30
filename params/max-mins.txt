@@ -1,0 +1,8 @@
+M4 or M1:
+- StartHour 9
+- StartMinute 1 or 4
+- CloseHour 16
+- CloseMin 30
+- StoplossPt 0
+- MaxStop -350
+- MaxGain 700
