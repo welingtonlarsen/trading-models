@@ -12,16 +12,16 @@
 CTrade trade;
 CPositionInfo  positionInfo;
 
-input int startHour = 9;
-input int startMinute = 10;
+input int startHour = 13;
+input int startMinute = 1;
 input int closeHour = 17;
-input int closeMinute = 40;
+input int closeMinute = 0;
 
-input int lote = 5;
+input int lote = 1;
 input int stopLossPoints = 0;
 
-input double dailyMaxFinantialStop = -400.00;
-input double dailyMaxFinantialGain = 800.00;
+input double dailyMaxFinantialLoss = -500.00;
+input double dailyMaxFinantialGain = 1000.00;
 
 int keltnerHandle = INVALID_HANDLE;
 double keltnerValues[];
@@ -57,24 +57,24 @@ void OnTick() {
    //Print("Resultado metodo = ", Controle());
 
 
-   if(isPurchased() && Controle() <= dailyMaxFinantialStop) {
+   if(isPurchased() && Controle() <= dailyMaxFinantialLoss) {
       trade.PositionClose(_Symbol);
    }
 
-   if(OrdersTotal() > 0 && Controle() <= dailyMaxFinantialStop) {
+   if(OrdersTotal() > 0 && Controle() <= dailyMaxFinantialLoss) {
       ulong ticket = OrderGetTicket(0);
       bool deleted = trade.OrderDelete(ticket);
    }
 
 
-   if(isNewBar() && isOperationTime() && Controle() > dailyMaxFinantialStop ) {
+   if(isNewBar() && isOperationTime()) {
       updateIndicators();
 
       double max = getMax();
       double min = getMin();
 
 
-      if(!isPurchased()) {
+      if(!isPurchased() && Controle() < dailyMaxFinantialGain) {
          if(OrdersTotal() > 0) {
             ulong ticket = OrderGetTicket(0);
             bool deleted = trade.OrderDelete(ticket);
@@ -91,7 +91,7 @@ void OnTick() {
 
             trade.SellLimit(lote, max, _Symbol, sl, min, 0, 0, "Venda sell limit");
          }
-      } else {
+      } else if(isPurchased()) {
          if(EnumToString(positionInfo.PositionType()) == "POSITION_TYPE_BUY") {
             double SL = trade.RequestSL();
             bool modified = trade.PositionModify(_Symbol, SL, max);
@@ -158,17 +158,15 @@ bool isOperationTime() {
    if(nowSrt.hour == startHour) {
       return nowSrt.min >= startMinute;
    }
-   
-   if(nowSrt.hour == closeHour)
-     {
+
+   if(nowSrt.hour == closeHour) {
       return nowSrt.min <= closeMinute;
-     }
-   
-   if(nowSrt.hour > startHour && nowSrt.hour < closeHour)
-     {
+   }
+
+   if(nowSrt.hour > startHour && nowSrt.hour < closeHour) {
       return true;
-     }
-   
+   }
+
    return false;
 }
 
