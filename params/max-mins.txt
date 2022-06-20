@@ -1,4 +1,4 @@
-M1:
+M1 (afternoon):
 - StartHour 13
 - StartMinute 1
 - CloseHour 17
@@ -6,3 +6,12 @@ M1:
 - StoplossPt 0
 - MaxStop -500
 - MaxGain 1000
+
+M1 (lunch):
+- StartHour 12
+- StartMinute 0
+- CloseHour 13
+- CloseMin 0
+- StoplossPt 0
+- MaxStop -200
+- MaxGain 400
